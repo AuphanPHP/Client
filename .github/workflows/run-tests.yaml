@@ -37,4 +37,7 @@ jobs:
         env:
           AUPHAN_API_TOKEN: ${{ secrets.AUPHAN_API_TOKEN }}
           AUPHAN_BASE_URI: ${{ secrets.AUPHAN_BASE_URI }}
-        run: vendor/bin/phpunit --testsuite=integration
+        run: |
+          echo "::add-mask::${{ secrets.AUPHAN_API_TOKEN }}"
+          echo "::add-mask::${{ secrets.AUPHAN_BASE_URI }}"
+          vendor/bin/phpunit --testsuite=integration
