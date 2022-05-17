@@ -1,0 +1,40 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.1]
+        stability: [prefer-lowest, prefer-stable]
+
+    name: P${{ matrix.php }} - ${{ matrix.stability }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          coverage: none
+
+      - name: Install dependencies
+        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+
+      - name: Execute unit tests
+        run: vendor/bin/phpunit --testsuite=unit
+
+      - name: Execute mutation tests
+        run: vendor/bin/infection
+
+      - name: Execute integration tests
+        env:
+          AUPHAN_API_TOKEN: ${{ secrets.AUPHAN_API_TOKEN }}
+          AUPHAN_BASE_URI: ${{ secrets.AUPHAN_BASE_URI }}
+        run: vendor/bin/phpunit --testsuite=integration
