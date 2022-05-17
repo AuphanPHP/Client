@@ -45,7 +45,7 @@ class ClientTest extends TestCase
     public function test_it_requires_api_key()
     {
         $this->expectExceptionObject(
-            new Exception('No api key was set. Did you forget to call setApiKey()')
+            new Exception('No api token was set. Did you forget to call setApiToken()')
         );
 
         (new Client)->getApiToken();
@@ -75,18 +75,18 @@ class ClientTest extends TestCase
     public function test_getting_report()
     {
         $mock = MockClient::fake([
-            'https://w2.auphansoftware.com/*' => MockClient::response(__DIR__ .'/stubs/mock.json'),
+            'https://w5.auphansoftware.com/*' => MockClient::response(__DIR__ .'/stubs/mock.json'),
         ]);
         $client = new Client($mock);
         $client
             ->setApiToken('ABC123XYZ')
-            ->setBaseUri('https://w2.auphansoftware.com/');
+            ->setBaseUri('https://w5.auphansoftware.com/');
 
         $client->report(new MockReport);
 
         $mock
             ->assertMethod('GET')
-            ->assertUri('https://w2.auphansoftware.com/reports/api.php?lang_id=1&data=%7b%22test-key%22%3a%22test-value%22%2c%22api_token%22%3a%22ABC123XYZ%22%7d');
+            ->assertUri('https://w5.auphansoftware.com/reports/api.php?lang_id=1&data=%7b%22test-key%22%3a%22test-value%22%2c%22api_token%22%3a%22ABC123XYZ%22%7d');
     }
 
     public function test_it_throws_exception_when_json_is_not_returned()
@@ -96,13 +96,13 @@ class ClientTest extends TestCase
         );
 
         $mock = MockClient::fake([
-            'https://w2.auphansoftware.com/*' => MockClient::response('api_token required'),
+            'https://w5.auphansoftware.com/*' => MockClient::response('api_token required'),
         ]);
 
         $client = new Client($mock);
         $client
             ->setApiToken('ABC123XYZ')
-            ->setBaseUri('https://w2.auphansoftware.com/');
+            ->setBaseUri('https://w5.auphansoftware.com/');
 
         $client->report(new MockReport);
     }

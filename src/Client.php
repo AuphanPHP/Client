@@ -58,7 +58,7 @@ final class Client
     public function getApiToken(): string
     {
         return $this->apiToken ?? throw new Exception(
-            'No api key was set. Did you forget to call setApiKey()?'
+            'No api token was set. Did you forget to call setApiToken()?'
         );
     }
 
